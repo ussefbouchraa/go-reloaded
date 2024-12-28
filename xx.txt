@@ -1,0 +1,1 @@
+An Amazing Simply add 42 (hex,1) and 10 (bin,1) and you, will see the result is 68!!!. 
