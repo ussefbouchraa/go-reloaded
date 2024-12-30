@@ -61,16 +61,6 @@ func _checkFiles(files ...string) bool{
 	return true
 }
 
-
-func _convertToBytes(strs []string) []byte{
-
-	var bytes []byte 
-		for i := 0 ; i < len(strs); i++{
-			bytes = append(bytes, []byte(strs[i] + " ")...)
-		}
-	return bytes
-}
-  
 func _hundleVowel(inp string) string{
 
 	vowel, res := "aeiouhAEIOUH" , ""
@@ -106,7 +96,6 @@ func  _spliting(inp string) string{
 
 
 func _addSuffix( input string) string{
-
 	tokens := []string{"(hex)", "(bin)", "(up)", "(low)", "(cap)"}	
 		for _, val := range(tokens){
 			if (s.Contains(input, val)){
@@ -131,6 +120,19 @@ func _trim( inp string) string{
 	
 
 }
+// func _hundleQuots(str string){
+// 	if s.Count(str, "'") <= 1{
+// 		return
+// 	}
+
+// 	for i := 0; i < len(str); i++{
+// 		if str[i] == 39{
+// 			start := i
+// 		}
+// 	}
+
+
+// }
 
 func _hundlePunct(inp string) string {
 	slices := []rune(_trim(inp))
@@ -147,7 +149,7 @@ func _hundlePunct(inp string) string {
 				slices[i] ,slices[i + 1] = slices[i + 1], slices[i] 
 			}
 		}
-	}
+	}	
 		return s.TrimRight(string(slices), " ")
 }
 
@@ -159,25 +161,20 @@ func _parseFileInp(input string ) []byte{
 		os.Exit(1)
 	}
 
-	// ---- addingSuffix
 	input = _addSuffix(input)
 	// f.Println(input)
-	
-	// ----- handle the vowel
+
 	input = _hundleVowel(input)
 	// f.Println(input)
 
 	// ----- custom spliting 
-	input = _spliting(input)
+	// input = _spliting(input)
 	// f.Println(input)
-	
-	// ------ hundle punctuations
+
 	input = _hundlePunct(input)
+	
 	return []byte(input)
 
-	// ----- insert slice of structs 
-
-	return _convertToBytes(s.Fields(input))
 }
 
 
@@ -198,16 +195,16 @@ func _launching(files ...string){
 	}
 }
 
-func main(){
-	args := os.Args[1:]
-	if len(args) != 2{
-		os.Stderr.WriteString("ERR : Not Enough Parameters !\n")
-		return 
-	}
-	if !_checkArgs(args[0], args[1]) || !_checkFiles(args[0], args[1]) {
-		return	
-	}
+// func main(){
+// 	args := os.Args[1:]
+// 	if len(args) != 2{
+// 		os.Stderr.WriteString("ERR : Not Enough Parameters !\n")
+// 		return 
+// 	}
+// 	if !_checkArgs(args[0], args[1]) || !_checkFiles(args[0], args[1]) {
+// 		return	
+// 	}
 
-	_launching(args[0], args[1])
+// 	_launching(args[0], args[1])
 
-}
+// }

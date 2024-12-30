@@ -1,6 +1,9 @@
-// package main
+package main
 
-// import "fmt"
+import (
+	"fmt"
+	 s "strings"
+)
 
 // func main() {
 
@@ -29,13 +32,19 @@
 //     result := strings.TrimSpace(s)
 //     fmt.Println(result)
 // }
-// package main
-// import (
-//     "fmt"
-//     "strings"
-// )
-// func main() {
-//     s := "s "
-//     result := strings.TrimSuffix(s, " ")
-//     fmt.Println(result)
-// }
+
+
+
+func _hundleQuots(str string) string {
+	if s.Count(str, "'") <= 1{
+		return "Error  Not Enough Quots "
+	}
+	start := s.Index(str, "'")
+	end := s.Index(str[start + 1: ], "'" )
+	
+	res :=  s.TrimSpace(str[start + 1 : end + 1])
+	// return  s.Replace(str, str[start + 1 : end + 
+}
+func main() {
+    fmt.Println(_hundleQuots(" ' awesome '"))
+}
