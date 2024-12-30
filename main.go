@@ -1,7 +1,7 @@
 package main
 
 import (
-	f  "fmt"
+	// f  "fmt"
 	os "os"
 	s "strings"
 )
@@ -121,25 +121,35 @@ func _trim( inp string) string{
 	res := ""
 	for i, val := range(inp){
 		if val == ' ' && len(inp) > i + 1  && inp[i + 1] == ' '{
-			res +=   
+			continue
+		}else{
+			res += string(val)
 		}
-
 	}
+
+	return res
+	
 
 }
 
 func _hundlePunct(inp string) string {
 	slices := []rune(_trim(inp))
 	puncts := ".,!?:;"
-		for i,val := range(slices){
-			for _,p := range(puncts){
-				if val == ' ' && len(slices) > i + 1 &&  slices[i + 1] == p{
-					slices[i] ,slices[i + 1] = slices[i + 1], slices[i] 
-				}  
+
+	for i := 0; i < len(slices) ; i++{
+		if slices[i] == ' ' && len(slices) > i + 1 {
+			if slices[i + 1] == ' '{
+				slices = append(slices[: i] , slices[i+1:]...)			
+				i--
+				continue
+			}
+			if s.Index(puncts,string(slices[i+1])) != -1 {
+				slices[i] ,slices[i + 1] = slices[i + 1], slices[i] 
 			}
 		}
-		return string(slices)
 	}
+		return s.TrimRight(string(slices), " ")
+}
 
 	
 func _parseFileInp(input string ) []byte{	
@@ -151,19 +161,20 @@ func _parseFileInp(input string ) []byte{
 
 	// ---- addingSuffix
 	input = _addSuffix(input)
-	f.Println(input)
+	// f.Println(input)
 	
 	// ----- handle the vowel
 	input = _hundleVowel(input)
-	f.Println(input)
+	// f.Println(input)
 
 	// ----- custom spliting 
 	input = _spliting(input)
-	f.Println(input)
+	// f.Println(input)
 	
 	// ------ hundle punctuations
 	input = _hundlePunct(input)
-	f.Println(input)
+	return []byte(input)
+
 	// ----- insert slice of structs 
 
 	return _convertToBytes(s.Fields(input))
@@ -180,7 +191,7 @@ func _launching(files ...string){
 	
 	newbuffer := _parseFileInp(string(data))
 	
-	err = os.WriteFile(files[1], newbuffer, 0777)
+	err = os.WriteFile(files[1], []byte(s.TrimRight(string(newbuffer), " ")), 0777)
 	if err != nil{
 		os.Stderr.WriteString(err.Error() )
 		return
