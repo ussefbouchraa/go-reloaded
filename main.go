@@ -191,7 +191,7 @@ func _launching(files ...string){
 	err = os.WriteFile(files[1], []byte(s.TrimRight(string(newbuffer), " ")), 0777)
 	if err != nil{
 		os.Stderr.WriteString(err.Error() )
-		return
+		returnkjhvskh
 	}
 }
 
