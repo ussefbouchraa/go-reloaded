@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"os"
+	// "os"
+	// "os"
 	s "strings"
 )
 
@@ -49,31 +50,33 @@ import (
 
 func _hundleQuots(str string) string {
 	if s.Count(str, "'") <= 1{
-		return "Error  Not Enough Quots "
+		return str
 	}
-	for i:= 0; i < len(str) ; i++{
+	for i := 0; i < len(str) ; i++{
 		start := s.Index(str[i: ], "'")
 		if start == -1{
 			continue
 		}
-		end := s.Index(str[start + 1: ], "'" )
+
+		end := s.Index(str[start + 1 : ], "'" )
 		if  end == -1{
 			continue
 		}
 		end++
-		fmt.Println( string(str[start]), string(str[end]) ,str[start : end] )
-		os.Exit(0)
-		trimmed := s.TrimSpace(str[start : end])
-		str = s.Replace(str, str[start : end],  trimmed , -1)
-		
-		fmt.Println("---", str[start : end] , "-----" + trimmed)
-		i = end
+
+		fmt.Println(string(str[start]), "----" , string(str[end]))
+		trimmed := s.TrimSpace(str[start + 1 : end])
+		str = s.Replace(str, str[start + 1 : end],  trimmed , -1)
+		i +=  end - (end - len(trimmed)) - 1
+		fmt.Println( "next --->"+ string(str[i+1]))
+
 	}
 	return str
 }
 
 func main(){
-fmt.Println(_hundleQuots("' awesome ' "))
-
-
+	fmt.Println(_hundleQuots("'abcdefj' ' xxxxx '"))
 }
+
+
+
