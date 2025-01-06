@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	// "os"
+	"strconv"
 	s "strings"
 )
 
@@ -47,31 +47,69 @@ import (
 //     fmt.Println(_hundleQuotes("xxxxx ' awesome ' "))
 // }
 
-func _hundleQuotes(str string) string {
-	if s.Count(str, "'") <= 1{
-		return str
+// func main(){
+// 	fmt.Println(_hundleQuotes("'   xxxx  ' '"))
+// }
+
+
+func _isExist( strs []string , target string) bool{
+	if len(strs) == 0 || len(target) == 0{
+		return false
 	}
-	i, start := 0 , 0
-	for  i < len(str) {
-		if str[i] == 39 && len(str) > i + 1{
-			start = i
-			end := s.Index(str[start+1 : ], "'" )
-			if  end == -1{
-				break
-			}
-			end += start + 1
-			trimmed := s.TrimSpace(str[start + 1 : end])
-			str = s.Replace(str, str[start + 1 : end],  trimmed , -1)
-			i = end 
+	for _, val := range(strs){
+		if val == target{
+			return true
 		}
-			i++
 	}
-	return str
+	return false
+}
+
+func Capitalize(str string) string {
+	return s.ToUpper(str[:1]) + s.ToLower(str[1:])
+}
+
+func  _hundleFlags(inp string) string{
+	tokens := []string{"(hex,", "(bin,", "(up,", "(low,", "(cap,"}
+	res := ""
+	splitedInp := s.Fields(inp)
+		
+		for i:= 0; i < len(splitedInp);i++ {
+			if !_isExist(tokens, splitedInp[i]){
+				res += splitedInp[i] + " "
+				continue
+			}
+		
+			if len(splitedInp) > i + 1 && len(splitedInp[i + 1]) >= 2 && splitedInp[i + 1][len(splitedInp[i + 1]) - 1] == ')' {
+				base ,err := strconv.Atoi(splitedInp[i+1][ :len(splitedInp[i+1]) - 1])
+					if err != nil || base <= 0 {
+						res += splitedInp[i] + " "
+						continue
+					}
+						if base > i{
+							base = i
+						}
+						prev := s.Join(splitedInp[i-base : i], " ")
+						switch splitedInp[i] {
+							case "(up,":
+								res = s.Replace(res, prev, s.ToUpper(prev), base)
+							case "(low,":
+								res = s.Replace(res, prev, s.ToLower(prev), base)
+							case "(cap,":
+								res = s.Replace(res, prev, Capitalize(prev), base)
+							// case "(bin,":
+							// 	res = s.Replace(res, prev, Capitalize(prev), base)
+							// case "(hex,":
+							// 	res = s.Replace(res, prev, Capitalize(prev), base)
+							}	
+						i++
+				}else{
+					res += splitedInp[i] + " "
+				}
+			}
+	return res
 }
 
 func main(){
-	fmt.Println(_hundleQuotes("'   xxxx  ' '"))
+
+	fmt.Println(_hundleFlags("zxxxx (cap, -2) xxxxxxxx  yyyyy"))
 }
-
-
-

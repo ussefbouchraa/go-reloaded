@@ -1,25 +1,17 @@
 package main
 
 import (
-	// f  "fmt"
+	f "fmt"
 	os "os"
 	s "strings"
 )
-
-
-// type S_tokens struct {
-// 	hex string
-// 	bin string
-// 	up string
-// 	low string
-// 	cap string
-// }
 
 type S_command struct {
 	buff 	string
 	flag 	string 
 	number 	uint  
 }
+
 
 
 func _checkExtention(arg string) bool {
@@ -77,23 +69,6 @@ func _hundleVowel(inp string) string{
 }
 
 
-func  _spliting(inp string) string{
-	tokens, res := []string{"(hex,", "(bin,", "(up,", "(low,", "(cap,"}, ""	
-	splitedInp := s.Fields(inp)
-		
-			for i:= 0; i < len(splitedInp) ; i++{
-			for _,tkn := range (tokens){
-				if s.Contains(splitedInp[i], tkn) && len(splitedInp) > i + 1 {
-					res += splitedInp[i] + splitedInp[i + 1] + " "
-					i+=2
-					continue
-				}
-			}
-			res += splitedInp[i] + " "
-		}
-	return res
-}
-
 
 func _addSuffix( input string) string{
 	tokens := []string{"(hex)", "(bin)", "(up)", "(low)", "(cap)"}	
@@ -120,21 +95,29 @@ func _trim( inp string) string{
 	
 
 }
-// func _hundleQuots(str string){
-// 	if s.Count(str, "'") <= 1{
-// 		return
-// 	}
+func _hundleQuotes(str string) string {
+	if s.Count(str, "'") <= 1{
+		return str
+	}
+	i, start := 0 , 0
+	for  i < len(str) {
+		if str[i] == 39 && len(str) > i + 1{
+			start = i
+			end := s.Index(str[start+1 : ], "'" )
+			if  end == -1{
+				break
+			}
+			end += start + 1
+			trimmed := s.TrimSpace(str[start + 1 : end])
+			str = s.Replace(str, str[start + 1 : end],  trimmed , -1)
+			i = end 
+		}
+			i++
+	}
+	return str
+}
 
-// 	for i := 0; i < len(str); i++{
-// 		if str[i] == 39{
-// 			start := i
-// 		}
-// 	}
-
-
-// }
-
-func _hundlePunct(inp string) string {
+func _hundlePunct(inp string) string{
 	slices := []rune(_trim(inp))
 	puncts := ".,!?:;"
 
@@ -153,25 +136,51 @@ func _hundlePunct(inp string) string {
 		return s.TrimRight(string(slices), " ")
 }
 
+// func  _hundleFlags(inp string) string{
+// 	tokens, res := []string{"(hex,", "(bin,", "(up,", "(low,", "(cap,"}, ""	
+// 	splitedInp := s.Fields(inp)
+// 		i:= 0;
+// 		for  i < len(splitedInp) {
+// 			if s.Contains(tokens[i], splitedInp[i]) && len(splitedInp) > i + 1 {
+// 				if len(splitedInp[i + 1]) == 3 && splitedInp[i + 1][0] == 32{
+// 						base ,err := 
+
+// 				}else{
+// 					res += splitedInp[i] + splitedInp[i + 1] + " "
+// 					i+=2
+// 				}
+// 			}else{
+// 			res += splitedInp[i] + " "
+// 			i++
+// 		}
+// 	}
+// 	return res
+// }
+
 	
+
 func _parseFileInp(input string ) []byte{	
 	
 	if len(input) == 0{
 		os.Stderr.WriteString("ERR : Empty File !\n")
-		os.Exit(1)
+		os.Exit(0)
 	}
 
 	input = _addSuffix(input)
-	// f.Println(input)
+	f.Println( "addSuffix: ", input)
 
 	input = _hundleVowel(input)
-	// f.Println(input)
+	f.Println("vowels: ", input)
 
-	// ----- custom spliting 
-	// input = _spliting(input)
-	// f.Println(input)
+	
+	input = _hundleQuotes(input)
+	f.Println("quotes: ", input)
+	
+	input = _hundleFlags(input)
+	f.Println("flags: ", input)
 
 	input = _hundlePunct(input)
+	f.Println("Punctation: ", input)
 	
 	return []byte(input)
 
