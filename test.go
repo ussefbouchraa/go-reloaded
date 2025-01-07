@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	s "strings"
+	// "unsafe"
 )
 
 // func main() {
@@ -70,46 +71,58 @@ func Capitalize(str string) string {
 
 func  _hundleFlags(inp string) string{
 	tokens := []string{"(hex,", "(bin,", "(up,", "(low,", "(cap,"}
-	res := ""
+	res := inp
 	splitedInp := s.Fields(inp)
 		
 		for i:= 0; i < len(splitedInp);i++ {
 			if !_isExist(tokens, splitedInp[i]){
-				res += splitedInp[i] + " "
 				continue
 			}
-		
-			if len(splitedInp) > i + 1 && len(splitedInp[i + 1]) >= 2 && splitedInp[i + 1][len(splitedInp[i + 1]) - 1] == ')' {
+			if len(splitedInp) > i + 1 && len(splitedInp[i + 1]) >= 2 &&
+				splitedInp[i + 1][len(splitedInp[i + 1]) - 1] == ')' {
+
 				base ,err := strconv.Atoi(splitedInp[i+1][ :len(splitedInp[i+1]) - 1])
-					if err != nil || base <= 0 {
-						res += splitedInp[i] + " "
-						continue
-					}
-						if base > i{
-							base = i
-						}
-						prev := s.Join(splitedInp[i-base : i], " ")
-						switch splitedInp[i] {
-							case "(up,":
-								res = s.Replace(res, prev, s.ToUpper(prev), base)
-							case "(low,":
-								res = s.Replace(res, prev, s.ToLower(prev), base)
-							case "(cap,":
-								res = s.Replace(res, prev, Capitalize(prev), base)
-							// case "(bin,":
-							// 	res = s.Replace(res, prev, Capitalize(prev), base)
-							// case "(hex,":
-							// 	res = s.Replace(res, prev, Capitalize(prev), base)
-							}	
-						i++
-				}else{
-					res += splitedInp[i] + " "
+				if err != nil || base <= 0 {
+					i++
+					continue
 				}
-			}
+				if base > i { base = i }
+				prev := s.Join(splitedInp[i-base : i ], " ")
+				oldflag := s.Join(splitedInp[i-base : i+2], " ")
+				switch splitedInp[i] {
+					case "(up,":
+							res = s.Replace(res, oldflag, s.ToUpper(prev), -1)
+							break
+						case "(low,":
+							res = s.Replace(res, prev, s.ToLower(prev), base)
+							break
+						case "(cap,":
+							res = s.Replace(res, prev, Capitalize(prev), base)
+							break
+						case "(bin,":
+							val, err := strconv.ParseInt(prev, 2,  len(prev)*8)
+							if(err != nil){
+								i++
+								break
+							}
+							toString :=  strconv.Itoa(int(val))
+							res = s.Replace(res, prev, toString, base)
+							break
+						case "(hex,":
+							val, err := strconv.ParseInt(prev, 10,  len(prev)*8)
+							if(err != nil){
+								i++
+								break
+							}
+							toString :=  strconv.Itoa(int(val))
+							res = s.Replace(res, prev, toString, base)
+						}
+					}
+				}
 	return res
 }
 
 func main(){
 
-	fmt.Println(_hundleFlags("zxxxx (cap, -2) xxxxxxxx  yyyyy"))
+	fmt.Println(_hundleFlags("(up, 1) It has been xx (up, 1) years(up, 1)"))
 }

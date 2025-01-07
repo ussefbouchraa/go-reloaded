@@ -159,10 +159,10 @@ func _hundlePunct(inp string) string{
 
 	
 
-func _parseFileInp(input string ) []byte{	
+func _parseFileInp(input string ) []rune{	
 	
 	if len(input) == 0{
-		os.Stderr.WriteString("ERR : Empty File !\n")
+		// os.Stderr.WriteString("ERR : Empty File !\n")
 		os.Exit(0)
 	}
 
@@ -172,7 +172,6 @@ func _parseFileInp(input string ) []byte{
 	input = _hundleVowel(input)
 	f.Println("vowels: ", input)
 
-	
 	input = _hundleQuotes(input)
 	f.Println("quotes: ", input)
 	
@@ -182,8 +181,7 @@ func _parseFileInp(input string ) []byte{
 	input = _hundlePunct(input)
 	f.Println("Punctation: ", input)
 	
-	return []byte(input)
-
+	return []rune(input)
 }
 
 
