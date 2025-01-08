@@ -1,51 +1,46 @@
 package main
 
 import (
-	f "fmt"
 	os "os"
+	f "piscine/funcs"
+	h "piscine/helper"
 	s "strings"
 )
 
-type S_command struct {
-	buff 	string
-	flag 	string 
-	number 	uint  
+func _parseFileInp(input string) []rune {
+	if len(input) == 0 {
+		os.Stderr.WriteString("ERR : Empty File !\n")
+		os.Exit(0)
+	}
+	funcs := []func(string) string{f.AddSuffix, f.HundleVowel, f.HundleQuotes, f.HundleFlags, f.HundlePunct}
+	for _, f := range funcs {
+		input = f(input)
+	}
+	return []rune(input)
 }
 
 
+func _launching(files ...string) {
 
-func _checkExtention(arg string) bool {
-	if len(arg) > 4{
-		if arg[len(arg) - 4 :] == ".txt"{
-			return true
-		}
+	data, err := os.ReadFile(files[0])
+	if err != nil {
+		os.Stderr.WriteString(err.Error() + "\n")
+		return
 	}
-	return false
+
+	newbuffer := _parseFileInp(string(data))
+
+	err = os.WriteFile(files[1], []byte(s.TrimRight(string(newbuffer), " ")), 0777)
+	if err != nil {
+		os.Stderr.WriteString(err.Error())
+		return
+	}
 }
 
-func _checkArgs(args ...string) bool {
-	
-	if len(args[0]) == 0 || len(args[1]) == 0 {
-		os.Stderr.WriteString("ERR : Invalid Argument !\n")
-		return false
-	}
-	if !_checkExtention(args[0]) || !_checkExtention(args[1]) {
-		os.Stderr.WriteString("ERR : Invalid Format !")
-		return false
-	}
-	if args[0] == args[1]{
-		os.Stderr.WriteString("ERR : Duplicated Files !\n")
-		return false
-	}
-	
-	return true
-}
-
-func _checkFiles(files ...string) bool{	
-	
-	for i := 0 ; i < len(files) ; i++{
+func _checkFiles(files ...string) bool {
+	for i := 0; i < len(files); i++ {
 		_, err := os.Stat(files[i])
-		if err != nil{
+		if err != nil {
 			os.Stderr.WriteString(err.Error())
 			return false
 		}
@@ -53,165 +48,32 @@ func _checkFiles(files ...string) bool{
 	return true
 }
 
-func _hundleVowel(inp string) string{
+func _checkArgs(args ...string) bool {
 
-	vowel, res := "aeiouhAEIOUH" , ""
-	for i, val := range(inp){
-		if (val == 'A' || val == 'a') && len(inp) > i + 2 && inp[i + 1] == ' ' { 
-				if (s.Contains(vowel, string(inp[i + 2]))) {
-					res += string(inp[i]) + "n"
-					continue
-				}
-			}
-		res += string(inp[i])
+	if len(args[0]) == 0 || len(args[1]) == 0 {
+		os.Stderr.WriteString("ERR : Invalid Argument !\n")
+		return false
 	}
-	return res
-}
-
-
-
-func _addSuffix( input string) string{
-	tokens := []string{"(hex)", "(bin)", "(up)", "(low)", "(cap)"}	
-		for _, val := range(tokens){
-			if (s.Contains(input, val)){
-				token := "(" + val[1 : len(val) - 1] + ", 1)" 
-				input = s.Replace(input, val, token, -1)
-			}
-		}
-		return input 
-}
-
-func _trim( inp string) string{
-	res := ""
-	for i, val := range(inp){
-		if val == ' ' && len(inp) > i + 1  && inp[i + 1] == ' '{
-			continue
-		}else{
-			res += string(val)
-		}
+	if !h.CheckExtention(args[0]) || !h.CheckExtention(args[1]) {
+		os.Stderr.WriteString("ERR : Invalid Format !")
+		return false
 	}
-
-	return res
-	
-
-}
-func _hundleQuotes(str string) string {
-	if s.Count(str, "'") <= 1{
-		return str
+	if args[0] == args[1] {
+		os.Stderr.WriteString("ERR : Duplicated Files !\n")
+		return false
 	}
-	i, start := 0 , 0
-	for  i < len(str) {
-		if str[i] == 39 && len(str) > i + 1{
-			start = i
-			end := s.Index(str[start+1 : ], "'" )
-			if  end == -1{
-				break
-			}
-			end += start + 1
-			trimmed := s.TrimSpace(str[start + 1 : end])
-			str = s.Replace(str, str[start + 1 : end],  trimmed , -1)
-			i = end 
-		}
-			i++
-	}
-	return str
+	return true
 }
 
-func _hundlePunct(inp string) string{
-	slices := []rune(_trim(inp))
-	puncts := ".,!?:;"
-
-	for i := 0; i < len(slices) ; i++{
-		if slices[i] == ' ' && len(slices) > i + 1 {
-			if slices[i + 1] == ' '{
-				slices = append(slices[: i] , slices[i+1:]...)			
-				i--
-				continue
-			}
-			if s.Index(puncts,string(slices[i+1])) != -1 {
-				slices[i] ,slices[i + 1] = slices[i + 1], slices[i] 
-			}
-		}
-	}	
-		return s.TrimRight(string(slices), " ")
-}
-
-// func  _hundleFlags(inp string) string{
-// 	tokens, res := []string{"(hex,", "(bin,", "(up,", "(low,", "(cap,"}, ""	
-// 	splitedInp := s.Fields(inp)
-// 		i:= 0;
-// 		for  i < len(splitedInp) {
-// 			if s.Contains(tokens[i], splitedInp[i]) && len(splitedInp) > i + 1 {
-// 				if len(splitedInp[i + 1]) == 3 && splitedInp[i + 1][0] == 32{
-// 						base ,err := 
-
-// 				}else{
-// 					res += splitedInp[i] + splitedInp[i + 1] + " "
-// 					i+=2
-// 				}
-// 			}else{
-// 			res += splitedInp[i] + " "
-// 			i++
-// 		}
-// 	}
-// 	return res
-// }
-
-	
-
-func _parseFileInp(input string ) []rune{	
-	
-	if len(input) == 0{
-		// os.Stderr.WriteString("ERR : Empty File !\n")
-		os.Exit(0)
-	}
-
-	input = _addSuffix(input)
-	f.Println( "addSuffix: ", input)
-
-	input = _hundleVowel(input)
-	f.Println("vowels: ", input)
-
-	input = _hundleQuotes(input)
-	f.Println("quotes: ", input)
-	
-	input = _hundleFlags(input)
-	f.Println("flags: ", input)
-
-	input = _hundlePunct(input)
-	f.Println("Punctation: ", input)
-	
-	return []rune(input)
-}
-
-
-func _launching(files ...string){
-
-	data , err := os.ReadFile(files[0])
-	if err != nil{
-		os.Stderr.WriteString(err.Error() + "\n")		
+func main() {
+	args := os.Args[1:]
+	if len(args) != 2 {
+		os.Stderr.WriteString("ERR : Not Enough Parameters !\n")
 		return
 	}
-	
-	newbuffer := _parseFileInp(string(data))
-	
-	err = os.WriteFile(files[1], []byte(s.TrimRight(string(newbuffer), " ")), 0777)
-	if err != nil{
-		os.Stderr.WriteString(err.Error() )
+	if !_checkArgs(args[0], args[1]) || !_checkFiles(args[0], args[1]) {
 		return
 	}
+
+	_launching(args[0], args[1])
 }
-
-// func main(){
-// 	args := os.Args[1:]
-// 	if len(args) != 2{
-// 		os.Stderr.WriteString("ERR : Not Enough Parameters !\n")
-// 		return 
-// 	}
-// 	if !_checkArgs(args[0], args[1]) || !_checkFiles(args[0], args[1]) {
-// 		return	
-// 	}
-
-// 	_launching(args[0], args[1])
-
-// }
