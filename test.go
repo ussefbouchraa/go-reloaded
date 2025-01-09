@@ -1,10 +1,9 @@
 package main
 
 import (
-	// "fmt"
-	// "strconv"
-	// s "strings"
-	// "unsafe"
+	"fmt"
+	"strconv"
+	s "strings"
 )
 
 // func main() {
@@ -36,79 +35,70 @@ import (
 
 
 
-// func _isExist( strs []string , target string) bool{
-// 	if len(strs) == 0 || len(target) == 0{
-// 		return false
-// 	}
-// 	for _, val := range(strs){
-// 		if val == target{
-// 			return true
-// 		}
-// 	}
-// 	return false
-// }
+func IsExist( strs []string , target string) bool{
+	if len(strs) == 0 || len(target) == 0{
+		return false
+	}
+	for _, val := range(strs){
+		if val == target{
+			return true
+		}
+	}
+	return false
+}
 
-// func Capitalize(str string) string {
-// 	return s.ToUpper(str[:1]) + s.ToLower(str[1:])
-// }
+func Capitalize(str string) string {
+	strs := []rune(str)
+	return s.ToUpper(string(strs[:1])) + s.ToLower(string(strs[1:]))
+}
 
-// func  _hundleFlags(inp string) string{
-// 	tokens := []string{"(hex,", "(bin,", "(up,", "(low,", "(cap,"}
-// 	res := inp
-// 	splitedInp := s.Fields(inp)
-		
-// 		for i:= 0; i < len(splitedInp);i++ {
-// 			if !_isExist(tokens, splitedInp[i]){
-// 				continue
-// 			}
-// 			if len(splitedInp) > i + 1 && len(splitedInp[i + 1]) >= 2 &&
-// 				splitedInp[i + 1][len(splitedInp[i + 1]) - 1] == ')' {
+func HandleFlags(inp string) string {
+	tokens := []string{"(hex,", "(bin,", "(up,", "(low,", "(cap,"}
+	splitedInp := s.Fields(inp)
 
-// 				base ,err := strconv.Atoi(splitedInp[i+1][ :len(splitedInp[i+1]) - 1])
-// 				if err != nil || base <= 0 {
-// 					i++
-// 					continue
-// 				}
-// 				if base > i { base = i }
-// 				prev := s.Join(splitedInp[i-base : i ], " ")
-// 				oldflag := s.Join(splitedInp[i-base : i+2], " ")
-// 				switch splitedInp[i] {
-// 					case "(up,":
-// 							res = s.Replace(res, oldflag, s.ToUpper(prev), base)
-// 							break
-// 						case "(low,":
-// 							res = s.Replace(res, prev, s.ToLower(prev), base)
-// 							break
-// 						case "(cap,":
-// 							res = s.Replace(res, prev, Capitalize(prev), base)
-// 							break
-// 						case "(bin,":
-// 							val, err := strconv.ParseInt(prev, 2,  len(prev)*8)
-// 							if(err != nil){
-// 								i++
-// 								break
-// 							}
-// 							toString :=  strconv.Itoa(int(val))
-// 							res = s.Replace(res, prev, toString, base)
-// 							break
-// 						case "(hex,":
-// 							val, err := strconv.ParseInt(prev, 10,  len(prev)*8)
-// 							if(err != nil){
-// 								i++
-// 								break
-// 							}
-// 							toString :=  strconv.Itoa(int(val))
-// 							res = s.Replace(res, prev, toString, base)
-// 						}
-// 					}
-// 				}
-// 	return res
-// }
+	for i := 0; i < len(splitedInp); i++ {
+		if !IsExist(tokens, splitedInp[i]) {
+			continue
+		}
+		if len(splitedInp) > i+1 && len(splitedInp[i+1]) >= 2 && s.HasSuffix(splitedInp[i + 1], ")"){
 
-// func main(){
-// s := []rune("🙂")
-// fmt.Println(len(s))
-// fmt.Println(cap(s))
-// fmt.Println((s))
-// 	// fmt.Println(_hundleFlags(" 🙂gg (cap, 2) It has been xx (up, 1) years(up, 1)"))
-// }
+			base, err := strconv.Atoi(splitedInp[i+1][:len(splitedInp[i+1])-1])
+			if err != nil || base <= 0 {
+				i++
+				continue
+			}
+			if base > i {base = i}
+			prev := s.Join(splitedInp[i-base:i], " ")
+			PrevWithFlag := s.Join(splitedInp[i - base : i + 2], " ")
+			
+			switch splitedInp[i] {
+				case "(up,":
+					inp = s.Replace(inp, PrevWithFlag, s.ToUpper(prev), base)
+				case "(low,":
+					inp = s.Replace(inp, PrevWithFlag, s.ToLower(prev), base)
+				case "(cap,":
+					inp = s.Replace(inp, PrevWithFlag, Capitalize(prev), base)
+				case "(bin,":
+					val, err := strconv.ParseInt(prev, 2, 0)
+					if err != nil {
+						i++
+						break
+					}
+					inp = s.Replace(inp, PrevWithFlag,  strconv.Itoa(int(val)), base)
+				case "(hex,":
+					val, err := strconv.ParseInt(prev, 16, 0)
+					if err != nil {
+						i++
+						break
+					}
+					inp = s.Replace(inp, PrevWithFlag, strconv.Itoa(int(val)), base)
+				}
+			}
+		}
+	return inp
+}
+
+func main(){
+
+	fmt.Println(HandleFlags("1F (hex, 1) 10 (bin, 1) It has been xx (up, 1) years(up, 1)"))
+}

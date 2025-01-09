@@ -65,15 +65,15 @@ func _checkArgs(args ...string) bool {
 	return true
 }
 
-func main() {
-	args := os.Args[1:]
-	if len(args) != 2 {
-		os.Stderr.WriteString("ERR : Not Enough Parameters !\n")
-		return
-	}
-	if !_checkArgs(args[0], args[1]) || !_checkFiles(args[0], args[1]) {
-		return
-	}
+// func main() {
+// 	args := os.Args[1:]
+// 	if len(args) != 2 {
+// 		os.Stderr.WriteString("ERR : Not Enough Parameters !\n")
+// 		return
+// 	}
+// 	if !_checkArgs(args[0], args[1]) || !_checkFiles(args[0], args[1]) {
+// 		return
+// 	}
 
-	_launching(args[0], args[1])
-}
+// 	_launching(args[0], args[1])
+// }

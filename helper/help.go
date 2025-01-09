@@ -3,9 +3,9 @@ package piscine
 import (
 	s "strings"
 )
-
 func Capitalize(str string) string {
-	return s.ToUpper(str[:1]) + s.ToLower(str[1:])
+	strs := []rune(str)
+	return s.ToUpper(string(strs[:1])) + s.ToLower(string(strs[1:]))
 }
 
 func IsExist(strs []string, target string) bool {

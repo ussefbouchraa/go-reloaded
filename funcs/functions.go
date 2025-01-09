@@ -90,40 +90,35 @@ func HundleFlags(inp string) string {
 				i++
 				continue
 			}
-			if base > i {
-				base = i
-			}
+			if base > i {base = i}
 			prev := s.Join(splitedInp[i-base:i], " ")
-			oldflag := s.Join(splitedInp[i-base:i+2], " ")
+			PrevWithFlag := s.Join(splitedInp[i - base : i + 2], " ")
+			
 			switch splitedInp[i] {
-			case "(up,":
-				res = s.Replace(res, oldflag, s.ToUpper(prev), base)
-				break
-			case "(low,":
-				res = s.Replace(res, prev, s.ToLower(prev), base)
-				break
-			case "(cap,":
-				res = s.Replace(res, prev, h.Capitalize(prev), base)
-				break
-			case "(bin,":
-				val, err := strconv.ParseInt(prev, 2, len(prev)*8)
-				if err != nil {
-					i++
-					break
+				case "(up,":
+					res = s.Replace(res, PrevWithFlag, s.ToUpper(prev), base)
+				case "(low,":
+					res = s.Replace(res, PrevWithFlag, s.ToLower(prev), base)
+				case "(cap,":
+					res = s.Replace(res, PrevWithFlag, h.Capitalize(prev), base)
+				case "(bin,":
+					val, err := strconv.ParseInt(PrevWithFlag, 2, 0)
+					if err != nil {
+						i++
+						break
+					}
+					toString := strconv.Itoa(int(val))
+					res = s.Replace(res, PrevWithFlag, toString, base)
+				case "(hex,":
+					val, err := strconv.ParseInt(prev, 16, 0)
+					if err != nil {
+						i++
+						break
+					}
+					toString := strconv.Itoa(int(val))
+					res = s.Replace(res, PrevWithFlag, toString, base)
 				}
-				toString := strconv.Itoa(int(val))
-				res = s.Replace(res, prev, toString, base)
-				break
-			case "(hex,":
-				val, err := strconv.ParseInt(prev, 10, len(prev)*8)
-				if err != nil {
-					i++
-					break
-				}
-				toString := strconv.Itoa(int(val))
-				res = s.Replace(res, prev, toString, base)
 			}
 		}
-	}
 	return res
 }
