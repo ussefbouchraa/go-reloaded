@@ -2,7 +2,20 @@ package piscine
 
 import (
 	s "strings"
+	f "fmt"
 )
+
+const ES_Green = " \033[32m"
+const ES_Reset = "\033[37m"
+
+func PrintHeader(){
+	f.Println(ES_Green + "  ############################################## " + ES_Reset)
+	f.Println(ES_Green + "  #                                           	# " + ES_Reset)
+	f.Println(ES_Green + "  #          <<--- Go_reloaded --->>           # " + ES_Reset)
+	f.Println(ES_Green + "  #                                           	# " + ES_Reset)
+	f.Println(ES_Green + "  ############################################## " + ES_Reset)
+}
+
 func Capitalize(str string) string {
 	strs := []rune(str)
 	return s.ToUpper(string(strs[:1])) + s.ToLower(string(strs[1:]))

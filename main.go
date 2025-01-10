@@ -22,6 +22,7 @@ func _parseFileInp(input string) []rune {
 
 func _launching(files ...string) {
 
+	h.PrintHeader()
 	data, err := os.ReadFile(files[0])
 	if err != nil {
 		os.Stderr.WriteString(err.Error() + "\n")

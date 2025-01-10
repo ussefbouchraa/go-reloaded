@@ -77,23 +77,21 @@ func HandlePunct(inp string) string {
 func HandleFlags(inp string) string {
 	tokens := []string{"(hex,", "(bin,", "(up,", "(low,", "(cap,"}
 	splitedInp := s.Fields(inp)
-
-	for i := 0; i < len(splitedInp); i++ {
+	
+	for i := 0 ; i < len(splitedInp); i++ {
 		if !h.IsExist(tokens, splitedInp[i]) {
 			continue
 		}
 		if len(splitedInp) > i+1 && len(splitedInp[i+1]) >= 2 && s.HasSuffix(splitedInp[i + 1], ")"){
 
 			base, err := strconv.Atoi(splitedInp[i+1][ : len(splitedInp[i+1])-1])
-			if err != nil || base <= 0 {
-				i++
-				continue
-			}
+			if err != nil || base <= 0 { continue }
+			
 			if base > i {base = i}
 			prevItems := s.Join(splitedInp[i-base : i], " ")
 			if prevItems == "" {
-				splitedInp[i], splitedInp[i + 1] = "", "" 
-				i++
+				splitedInp = append(splitedInp[ : i], splitedInp[i + 2: ]...) 
+				i--
 				continue
 			}
 
@@ -106,17 +104,14 @@ func HandleFlags(inp string) string {
 					splitedInp = append(splitedInp[ : i-base], append([]string{h.Capitalize(prevItems)}, splitedInp[i + 2: ]...)... )
 				case "(bin,":
 					val, err := strconv.ParseInt(prevItems, 2, 0)
-					if err == nil {
-						splitedInp = append(splitedInp[ : i-base], append([]string{strconv.Itoa(int(val))}, splitedInp[i + 2: ]...)... )
-					}
-					i++
+					if err != nil { continue }
+					splitedInp = append(splitedInp[ : i-base], append([]string{strconv.Itoa(int(val))}, splitedInp[i + 2: ]...)... )
 				case "(hex,":
 					val, err := strconv.ParseInt(prevItems, 16, 0)
-					if err == nil {
-						splitedInp = append(splitedInp[ : i-base], append([]string{strconv.Itoa(int(val))}, splitedInp[i + 2: ]...)... )
-					}
-					i++
+					if err != nil { continue }
+					splitedInp = append(splitedInp[ : i-base], append([]string{strconv.Itoa(int(val))}, splitedInp[i + 2: ]...)... )
 				}
+				i--
 			}
 		}
 	return s.Join(splitedInp, " ")
