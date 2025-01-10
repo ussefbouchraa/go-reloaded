@@ -17,7 +17,7 @@ func AddSuffix(input string) string {
 	return input
 }
 
-func HundleVowel(inp string) string {
+func HandleVowel(inp string) string {
 	vowel, res := "aeiouhAEIOUH", ""
 	inpp := []rune(inp)
 	for i, val := range inpp {
@@ -32,7 +32,7 @@ func HundleVowel(inp string) string {
 	return res
 }
 
-func HundleQuotes(inp string) string {
+func HandleQuotes(inp string) string {
 	if s.Count(inp, "'") <= 1 {
 		return inp
 	}
@@ -54,7 +54,7 @@ func HundleQuotes(inp string) string {
 	return inp
 }
 
-func HundlePunct(inp string) string {
+func HandlePunct(inp string) string {
 	slices := []rune(h.Trim(inp))
 	puncts := ".,!?:;"
 
@@ -73,52 +73,51 @@ func HundlePunct(inp string) string {
 	return s.TrimRight(string(slices), " ")
 }
 
-func HundleFlags(inp string) string {
+
+func HandleFlags(inp string) string {
 	tokens := []string{"(hex,", "(bin,", "(up,", "(low,", "(cap,"}
-	res := inp
 	splitedInp := s.Fields(inp)
 
 	for i := 0; i < len(splitedInp); i++ {
 		if !h.IsExist(tokens, splitedInp[i]) {
 			continue
 		}
-		if len(splitedInp) > i+1 && len(splitedInp[i+1]) >= 2 &&
-			splitedInp[i+1][len(splitedInp[i+1])-1] == ')' {
+		if len(splitedInp) > i+1 && len(splitedInp[i+1]) >= 2 && s.HasSuffix(splitedInp[i + 1], ")"){
 
-			base, err := strconv.Atoi(splitedInp[i+1][:len(splitedInp[i+1])-1])
+			base, err := strconv.Atoi(splitedInp[i+1][ : len(splitedInp[i+1])-1])
 			if err != nil || base <= 0 {
 				i++
 				continue
 			}
 			if base > i {base = i}
-			prev := s.Join(splitedInp[i-base:i], " ")
-			PrevWithFlag := s.Join(splitedInp[i - base : i + 2], " ")
-			
+			prevItems := s.Join(splitedInp[i-base : i], " ")
+			if prevItems == "" {
+				splitedInp[i], splitedInp[i + 1] = "", "" 
+				i++
+				continue
+			}
+
 			switch splitedInp[i] {
 				case "(up,":
-					res = s.Replace(res, PrevWithFlag, s.ToUpper(prev), base)
+						splitedInp = append(splitedInp[ : i-base], append([]string{s.ToUpper(prevItems)}, splitedInp[i + 2: ]...)... )
 				case "(low,":
-					res = s.Replace(res, PrevWithFlag, s.ToLower(prev), base)
+						splitedInp = append(splitedInp[ : i-base], append([]string{s.ToLower(prevItems)}, splitedInp[i + 2: ]...)... )
 				case "(cap,":
-					res = s.Replace(res, PrevWithFlag, h.Capitalize(prev), base)
+					splitedInp = append(splitedInp[ : i-base], append([]string{h.Capitalize(prevItems)}, splitedInp[i + 2: ]...)... )
 				case "(bin,":
-					val, err := strconv.ParseInt(PrevWithFlag, 2, 0)
-					if err != nil {
-						i++
-						break
+					val, err := strconv.ParseInt(prevItems, 2, 0)
+					if err == nil {
+						splitedInp = append(splitedInp[ : i-base], append([]string{strconv.Itoa(int(val))}, splitedInp[i + 2: ]...)... )
 					}
-					toString := strconv.Itoa(int(val))
-					res = s.Replace(res, PrevWithFlag, toString, base)
+					i++
 				case "(hex,":
-					val, err := strconv.ParseInt(prev, 16, 0)
-					if err != nil {
-						i++
-						break
+					val, err := strconv.ParseInt(prevItems, 16, 0)
+					if err == nil {
+						splitedInp = append(splitedInp[ : i-base], append([]string{strconv.Itoa(int(val))}, splitedInp[i + 2: ]...)... )
 					}
-					toString := strconv.Itoa(int(val))
-					res = s.Replace(res, PrevWithFlag, toString, base)
+					i++
 				}
 			}
 		}
-	return res
+	return s.Join(splitedInp, " ")
 }

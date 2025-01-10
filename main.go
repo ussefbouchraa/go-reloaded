@@ -12,7 +12,7 @@ func _parseFileInp(input string) []rune {
 		os.Stderr.WriteString("ERR : Empty File !\n")
 		os.Exit(0)
 	}
-	funcs := []func(string) string{f.AddSuffix, f.HundleVowel, f.HundleQuotes, f.HundleFlags, f.HundlePunct}
+	funcs := []func(string) string{f.AddSuffix, f.HandleVowel, f.HandleQuotes, f.HandleFlags, f.HandlePunct}
 	for _, f := range funcs {
 		input = f(input)
 	}
@@ -65,15 +65,15 @@ func _checkArgs(args ...string) bool {
 	return true
 }
 
-// func main() {
-// 	args := os.Args[1:]
-// 	if len(args) != 2 {
-// 		os.Stderr.WriteString("ERR : Not Enough Parameters !\n")
-// 		return
-// 	}
-// 	if !_checkArgs(args[0], args[1]) || !_checkFiles(args[0], args[1]) {
-// 		return
-// 	}
+func main() {
+	args := os.Args[1:]
+	if len(args) != 2 {
+		os.Stderr.WriteString("ERR : Not Enough Parameters !\n")
+		return
+	}
+	if !_checkArgs(args[0], args[1]) || !_checkFiles(args[0], args[1]) {
+		return
+	}
 
-// 	_launching(args[0], args[1])
-// }
+	_launching(args[0], args[1])
+}
