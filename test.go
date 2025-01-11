@@ -1,5 +1,11 @@
 package main
 
+import (
+	"fmt"
+	"strconv"
+	s "strings"
+)
+
 // import "fmt"
 
 // import (
@@ -34,56 +40,70 @@ package main
 //     fmt.Println(result)
 // }
 
-// func HandleFlags(inp string) string {
-// 	tokens := []string{"(hex,", "(bin,", "(up,", "(low,", "(cap,"}
-// 	splitedInp := s.Fields(inp)
 
-// 	for i := 0; i < len(splitedInp); i++ {
-// 		if !IsExist(tokens, splitedInp[i]) {
-// 			continue
-// 		}
-// 		if len(splitedInp) > i+1 && len(splitedInp[i+1]) >= 2 && s.HasSuffix(splitedInp[i + 1], ")"){
 
-// 			base, err := strconv.Atoi(splitedInp[i+1][:len(splitedInp[i+1])-1])
-// 			if err != nil || base <= 0 {
-// 				i++
-// 				continue
-// 			}
-// 			if base > i {base = i}
-// 			prev := s.Join(splitedInp[i-base:i], " ")
-// 			PrevWithFlag := s.Join(splitedInp[i - base : i + 2], " ")
+func Capitalize(str string) string {
+	strs := []rune(str)
+	return s.ToUpper(string(strs[:1])) + s.ToLower(string(strs[1:]))
+}
 
-// 			switch splitedInp[i] {
-// 				case "(up,":
-// 					inp = s.Replace(inp, PrevWithFlag, s.ToUpper(prev), base)
-// 				case "(low,":
-// 					inp = s.Replace(inp, PrevWithFlag, s.ToLower(prev), base)
-// 				case "(cap,":
-// 					inp = s.Replace(inp, PrevWithFlag, Capitalize(prev), base)
-// 				case "(bin,":
-// 					val, err := strconv.ParseInt(prev, 2, 0)
-// 					if err != nil {
-// 						i++
-// 						break
-// 					}
-// 					inp = s.Replace(inp, PrevWithFlag,  strconv.Itoa(int(val)), base)
-// 				case "(hex,":
-// 					val, err := strconv.ParseInt(prev, 16, 0)
-// 					if err != nil {
-// 						i++
-// 						break
-// 					}
-// 					inp = s.Replace(inp, PrevWithFlag, strconv.Itoa(int(val)), base)
-// 				}
-// 			}
-// 		}
-// 	return inp
-// }
+func IsExist(strs []string, target string) bool {
+	if len(strs) == 0 || len(target) == 0 {
+		return false
+	}
+	for _, val := range strs {
+		if val == target {
+			return true
+		}
+	}
+	return false
+}
 
-// const ES_Green = " \033[32m"
-// const ES_Reset = " \033[37m"
+
+func HandleFlags(inp string) string {
+	tokens := []string{"(hex,", "(bin,", "(up,", "(low,", "(cap,"}
+	splitedInp := s.Fields(inp)
+	for i := 0 ; i < len(splitedInp); i++ {
+		fmt.Println("general :", splitedInp[i])
+		if !IsExist(tokens, splitedInp[i]) {
+			fmt.Println("skiped :",splitedInp[i])
+			continue
+		}
+		if len(splitedInp) > i+1 && len(splitedInp[i+1]) >= 2 && s.HasSuffix(splitedInp[i + 1], ")"){
+
+			base, err := strconv.Atoi(splitedInp[i+1][ : len(splitedInp[i+1])-1])
+			if err != nil || base <= 0 { continue }
+			
+			if base > i {base = i}
+			prevItems := s.Join(splitedInp[i-base : i], " ")
+			if prevItems == "" {
+				splitedInp = append(splitedInp[ : i], splitedInp[i + 2: ]...) 
+				i-=2
+				continue
+			}
+
+			switch splitedInp[i] {
+				case "(up,":
+						splitedInp = append(splitedInp[ : i-base], append([]string{s.ToUpper(prevItems)}, splitedInp[i + 2: ]...)... )
+				case "(low,":
+						splitedInp = append(splitedInp[ : i-base], append([]string{s.ToLower(prevItems)}, splitedInp[i + 2: ]...)... )
+				case "(cap,":
+					splitedInp = append(splitedInp[ : i-base], append([]string{Capitalize(prevItems)}, splitedInp[i + 2: ]...)... )
+				case "(bin,":
+					val, err := strconv.ParseInt(prevItems, 2, 0)
+					if err != nil { continue }
+					splitedInp = append(splitedInp[ : i-base], append([]string{strconv.Itoa(int(val))}, splitedInp[i + 2: ]...)... )
+				case "(hex,":
+					val, err := strconv.ParseInt(prevItems, 16, 0)
+					if err != nil { continue }
+					splitedInp = append(splitedInp[ : i-base], append([]string{strconv.Itoa(int(val))}, splitedInp[i + 2: ]...)... )
+				}
+				i-=2
+			}
+		}
+	return s.Join(splitedInp, " ")
+}
 
 // func main(){
-// 	fmt.Println(ES_Green + " " + "<<--- Go_reloaded --->>" + ES_Reset  )
-// 	// fmt.Println(HandleFlags(" (low, 1) (cap, 1)"))      
+// 	fmt.Println(HandleFlags("            zz !! (up, 2) (low, 1) (cap, 3) ! It has  been x🙂x (cap) years(up, 1)"))      
 // }

@@ -12,13 +12,12 @@ func _parseFileInp(input string) []rune {
 		os.Stderr.WriteString("ERR : Empty File !\n")
 		os.Exit(0)
 	}
-	funcs := []func(string) string{f.AddSuffix, f.HandleVowel, f.HandleQuotes, f.HandleFlags, f.HandlePunct}
+	funcs := []func(string) string{ f.AddSuffix, f.HandleVowel, f.HandleQuotes, f.HandleFlags, f.HandlePunct}
 	for _, f := range funcs {
 		input = f(input)
 	}
 	return []rune(input)
 }
-
 
 func _launching(files ...string) {
 
@@ -28,7 +27,6 @@ func _launching(files ...string) {
 		os.Stderr.WriteString(err.Error() + "\n")
 		return
 	}
-
 	newbuffer := _parseFileInp(string(data))
 
 	err = os.WriteFile(files[1], []byte(s.TrimRight(string(newbuffer), " ")), 0777)
@@ -56,7 +54,7 @@ func _checkArgs(args ...string) bool {
 		return false
 	}
 	if !h.CheckExtention(args[0]) || !h.CheckExtention(args[1]) {
-		os.Stderr.WriteString("ERR : Invalid Format !")
+		os.Stderr.WriteString("ERR : Invalid File Format !")
 		return false
 	}
 	if args[0] == args[1] {
