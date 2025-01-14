@@ -1,7 +1,6 @@
 package piscine
 
 import (
-	"fmt"
 	h "piscine/helper"
 	"strconv"
 	s "strings"
