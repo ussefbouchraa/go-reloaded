@@ -8,14 +8,13 @@ import (
 )
 
 func AddSuffix(input string) string {
-	tokens := []string{" (bin)", " (hex)", " (up)", " (low)", " (cap)"}
+	tokens := []string{" (bin) ", " (hex) ", " (up) ", " (low) ", " (cap) "}
 	for _, val := range tokens {
 		if s.Contains(input, val) {
-			token := val[:len(val) -1] + ", 1) "
+			token := val[:len(val) -2] + ", 1) "
 			input = s.Replace(input, val, token, -1)
 		}
 	}
-	fmt.Println(input)
 	return input
 }
 
@@ -35,7 +34,6 @@ func HandleVowel(inp string) string {
 }
 
 func HandleQuotes(inp string) string {
-	// inpp := []rune(inp)
 
 	if s.Count(inp, "'") <= 1 {
 		return inp
@@ -55,7 +53,6 @@ func HandleQuotes(inp string) string {
 		}
 		i++
 	}
-	fmt.Println(string(inp))
 	return inp
 }
 
@@ -80,8 +77,9 @@ func HandlePunct(inp string) string {
 
 
 func HandleFlags(inp string) string {
+	
 	tokens := []string{"(hex,", "(bin,", "(up,", "(low,", "(cap,"}
-	splitedInp := s.Fields(inp)
+	splitedInp := s.Split(inp, " ")
 	
 	for i := 0 ; i < len(splitedInp); i++ {
 		if !h.IsExist(tokens, splitedInp[i]) {
@@ -90,7 +88,7 @@ func HandleFlags(inp string) string {
 		if len(splitedInp) > i+1 && len(splitedInp[i+1]) >= 2 && s.HasSuffix(splitedInp[i + 1], ")"){
 
 			base, err := strconv.Atoi(splitedInp[i+1][ : len(splitedInp[i+1])-1])
-			if err != nil || base < 0 { continue }
+			if err != nil || base <= 0 { continue }
 			
 			if base > i {base = i}
 			prevItems := s.Join(splitedInp[i-base : i], " ")
@@ -109,12 +107,11 @@ func HandleFlags(inp string) string {
 					splitedInp = append(splitedInp[ : i-base], append([]string{h.Capitalize(prevItems)}, splitedInp[i + 2: ]...)... )
 				case "(bin,":
 					val, err := strconv.ParseInt(prevItems, 2, 0)
-					if err != nil || splitedInp[i+1] != "1)"   { continue }
+					if err != nil || splitedInp[i+1] != "1)" { continue }
 					splitedInp = append(splitedInp[ : i-base], append([]string{strconv.Itoa(int(val))}, splitedInp[i + 2: ]...)... )
 				case "(hex,":
 					val, err := strconv.ParseInt(prevItems, 16, 0)
 					if err != nil || splitedInp[i+1] != "1)"   { continue }
-					// return to split the previnp
 					splitedInp = append(splitedInp[ : i-base], append([]string{strconv.Itoa(int(val))}, splitedInp[i + 2: ]...)... )
 		
 				}
