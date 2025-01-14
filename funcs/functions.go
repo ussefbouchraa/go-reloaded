@@ -1,13 +1,15 @@
 package piscine
 
 import (
+	// "fmt"
+	"fmt"
 	h "piscine/helper"
 	"strconv"
 	s "strings"
 )
 
 func AddSuffix(input string) string {
-	tokens := []string{" (bin) ", " (hex) ", " (up) ", " (low) ", " (cap) "}
+	tokens := []string {" (up) ", " (low) ", " (cap) "}
 	for _, val := range tokens {
 		if s.Contains(input, val) {
 			token := val[:len(val) -2] + ", 1) "
@@ -56,7 +58,7 @@ func HandleQuotes(inp string) string {
 }
 
 func HandlePunct(inp string) string {
-	slices := []rune(h.Trim(inp))
+	slices := []rune(inp)
 	puncts := ".,!?:;"
 
 	for i := 0; i < len(slices); i++ {
@@ -77,15 +79,37 @@ func HandlePunct(inp string) string {
 
 func HandleFlags(inp string) string {
 	
-	tokens := []string{"(hex,", "(bin,", "(up,", "(low,", "(cap,"}
+	tokens := []string{"(hex)", "(bin)", "(up,", "(low,", "(cap,"}
 	splitedInp := s.Split(inp, " ")
 	
 	for i := 0 ; i < len(splitedInp); i++ {
 		if !h.IsExist(tokens, splitedInp[i]) {
 			continue
 		}
-		if len(splitedInp) > i+1 && len(splitedInp[i+1]) >= 2 && s.HasSuffix(splitedInp[i + 1], ")"){
 
+		if splitedInp[i] == "(bin)" || splitedInp[i] == "(hex)"  {
+			var val int64 = 0
+			var err error = nil
+			if i - 1 < 0{
+				splitedInp = append(splitedInp[ : i], splitedInp[i + 1: ]...) 
+					i--
+					continue
+			}
+				if splitedInp[i] == "(bin)" {
+					val, err = strconv.ParseInt(splitedInp[i - 1], 2, 0)
+				}else if splitedInp[i] == "(hex)" {
+					val, err = strconv.ParseInt(splitedInp[i - 1], 2, 0)
+				}
+
+				if err != nil { continue }
+				splitedInp = append(splitedInp[ : i - 1], append([]string{strconv.Itoa(int(val))}, splitedInp[i + 1: ]...)... )
+				i -= 2
+				continue
+		}
+
+
+		if len(splitedInp) > i+1 && len(splitedInp[i+1]) >= 2 && s.HasSuffix(splitedInp[i + 1], ")"){
+			
 			base, err := strconv.Atoi(splitedInp[i+1][ : len(splitedInp[i+1])-1])
 			if err != nil || base <= 0 { continue }
 			
@@ -96,25 +120,17 @@ func HandleFlags(inp string) string {
 				i--
 				continue
 			}
-
 			switch splitedInp[i] {
 				case "(up,":
 						splitedInp = append(splitedInp[ : i-base], append([]string{s.ToUpper(prevItems)}, splitedInp[i + 2: ]...)... )
 				case "(low,":
 						splitedInp = append(splitedInp[ : i-base], append([]string{s.ToLower(prevItems)}, splitedInp[i + 2: ]...)... )
 				case "(cap,":
-					splitedInp = append(splitedInp[ : i-base], append([]string{h.Capitalize(prevItems)}, splitedInp[i + 2: ]...)... )
-				case "(bin,":
-					val, err := strconv.ParseInt(prevItems, 2, 0)
-					if err != nil || splitedInp[i+1] != "1)" { continue }
-					splitedInp = append(splitedInp[ : i-base], append([]string{strconv.Itoa(int(val))}, splitedInp[i + 2: ]...)... )
-				case "(hex,":
-					val, err := strconv.ParseInt(prevItems, 16, 0)
-					if err != nil || splitedInp[i+1] != "1)"   { continue }
-					splitedInp = append(splitedInp[ : i-base], append([]string{strconv.Itoa(int(val))}, splitedInp[i + 2: ]...)... )
-		
+					// fmt.Println("----> ",splitedInp[ : i-base])
+					splitedInp = append(splitedInp[ : i-base], append(s.Split(h.Capitalize(prevItems)), " "), splitedInp[i + 2: ]...)... )
+					fmt.Println("----> ",splitedInp)								
 				}
-				i = 0
+				i -= 2
 			}
 		}
 	return s.Join(splitedInp, " ")

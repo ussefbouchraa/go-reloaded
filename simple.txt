@@ -1,7 +1,3 @@
-10 (bin, 1) 
-
-
-
-1f (hex, 1) 
-
+😎 (low, 1000000 (bin) (hex) (bin)).
+ hahahaha🤣 (cap) 
 

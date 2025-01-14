@@ -18,7 +18,12 @@ func PrintHeader(){
 
 func Capitalize(str string) string {
 	strs := []rune(str)
-	return s.ToUpper(string(strs[:1])) + s.ToLower(string(strs[1:]))
+	i := 0
+	for strs[i] == '\n'{
+		i++
+	}
+	return s.ToUpper(string(strs[ : i + 1])) + s.ToLower(string(strs[i + 1:]))
+	
 }
 
 func IsExist(strs []string, target string) bool {

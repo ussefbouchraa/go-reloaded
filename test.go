@@ -60,13 +60,14 @@ func IsExist(strs []string, target string) bool {
 }
 
 
+
 func HandleFlags(inp string) string {
+	
 	tokens := []string{"(hex,", "(bin,", "(up,", "(low,", "(cap,"}
-	splitedInp := s.Fields(inp)
+	splitedInp := s.Split(inp, " ")
+	
 	for i := 0 ; i < len(splitedInp); i++ {
-		fmt.Println("general :", splitedInp[i])
 		if !IsExist(tokens, splitedInp[i]) {
-			fmt.Println("skiped :",splitedInp[i])
 			continue
 		}
 		if len(splitedInp) > i+1 && len(splitedInp[i+1]) >= 2 && s.HasSuffix(splitedInp[i + 1], ")"){
@@ -78,7 +79,7 @@ func HandleFlags(inp string) string {
 			prevItems := s.Join(splitedInp[i-base : i], " ")
 			if prevItems == "" {
 				splitedInp = append(splitedInp[ : i], splitedInp[i + 2: ]...) 
-				i-=2
+				i--
 				continue
 			}
 
@@ -91,19 +92,20 @@ func HandleFlags(inp string) string {
 					splitedInp = append(splitedInp[ : i-base], append([]string{Capitalize(prevItems)}, splitedInp[i + 2: ]...)... )
 				case "(bin,":
 					val, err := strconv.ParseInt(prevItems, 2, 0)
-					if err != nil { continue }
+					if err != nil || splitedInp[i+1] != "1)" { continue }
 					splitedInp = append(splitedInp[ : i-base], append([]string{strconv.Itoa(int(val))}, splitedInp[i + 2: ]...)... )
 				case "(hex,":
 					val, err := strconv.ParseInt(prevItems, 16, 0)
-					if err != nil { continue }
+					if err != nil || splitedInp[i+1] != "1)"   { continue }
 					splitedInp = append(splitedInp[ : i-base], append([]string{strconv.Itoa(int(val))}, splitedInp[i + 2: ]...)... )
+		
 				}
-				i-=2
+				i -= 2 
 			}
 		}
 	return s.Join(splitedInp, " ")
 }
 
 // func main(){
-// 	fmt.Println(HandleFlags("            zz !! (up, 2) (low, 1) (cap, 3) ! It has  been x🙂x (cap) years(up, 1)"))      
+// 	fmt.Println(HandleFlags("(up, 1) \n1f (hex, 1) "))      
 // }
