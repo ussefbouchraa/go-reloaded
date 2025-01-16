@@ -1,3 +1,3 @@
-😎 (low, 64 (hex) (bin)).
- Hahahaha🤣 
-
+😎 (low, 1000000 (bin) (hex) (bin) ). 
+hahahaha🤣 
+a (cap, 5)

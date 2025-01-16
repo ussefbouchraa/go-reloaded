@@ -16,15 +16,6 @@ func PrintHeader(){
 	f.Println(ES_Green + "  ############################################## " + ES_Reset)
 }
 
-func Capitalize(str string) string {
-	strs := []rune(str)
-	i := 0
-	for strs[i] == '\n'{
-		i++
-	}
-	return s.ToUpper(string(strs[ : i + 1])) + s.ToLower(string(strs[i + 1:]))
-	
-}
 
 func IsExist(strs []string, target string) bool {
 	if len(strs) == 0 || len(target) == 0 {
@@ -58,4 +49,49 @@ func CheckExtention(arg string) bool {
 		}
 	}
 	return false
+}
+
+func Split(s string) []string{
+	str:= []rune(s)
+	data := ""
+	slic := []string{}
+
+	if len(s) == 0{
+		return slic
+	}
+	for _, char := range str {
+		if char == ' ' { 
+			if data != "" {
+				slic = append(slic, data)
+				data = ""
+			}
+		} else {
+			data += string(char) 
+		}
+	}
+	if data != ""{
+		slic = append(slic, data)
+	}
+	return slic
+}
+
+func ToUpper(slic []string) []string {
+	for i, str := range slic {
+		slic[i] = s.ToUpper(str)
+	}
+	return slic
+}
+
+func ToLower(slic []string) []string {
+	for i, str := range slic {
+		slic[i] = s.ToLower(str)
+	}
+	return slic
+}
+func Capitalize(slic []string) []string {
+	for i, str := range slic {
+		slic[i] = s.ToUpper(string(str[0])) + s.ToLower(str[1 :])
+	}
+	return slic
+
 }

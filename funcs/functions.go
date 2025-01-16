@@ -2,7 +2,7 @@ package piscine
 
 import (
 	// "fmt"
-	"fmt"
+	// "fmt"
 	h "piscine/helper"
 	"strconv"
 	s "strings"
@@ -81,7 +81,7 @@ func HandleFlags(inp string) string {
 	
 	tokens := []string{"(hex)", "(bin)", "(up,", "(low,", "(cap,"}
 	splitedInp := s.Split(inp, " ")
-	
+
 	for i := 0 ; i < len(splitedInp); i++ {
 		if !h.IsExist(tokens, splitedInp[i]) {
 			continue
@@ -98,7 +98,7 @@ func HandleFlags(inp string) string {
 				if splitedInp[i] == "(bin)" {
 					val, err = strconv.ParseInt(splitedInp[i - 1], 2, 0)
 				}else if splitedInp[i] == "(hex)" {
-					val, err = strconv.ParseInt(splitedInp[i - 1], 2, 0)
+					val, err = strconv.ParseInt(splitedInp[i - 1], 16, 0)
 				}
 
 				if err != nil { continue }
@@ -114,24 +114,25 @@ func HandleFlags(inp string) string {
 			if err != nil || base <= 0 { continue }
 			
 			if base > i {base = i}
-			prevItems := s.Join(splitedInp[i-base : i], " ")
-			if prevItems == "" {
+			prevItems := splitedInp[i-base : i]	
+
+			if prevItems == nil {
 				splitedInp = append(splitedInp[ : i], splitedInp[i + 2: ]...) 
 				i--
 				continue
 			}
 			switch splitedInp[i] {
 				case "(up,":
-						splitedInp = append(splitedInp[ : i-base], append([]string{s.ToUpper(prevItems)}, splitedInp[i + 2: ]...)... )
+						splitedInp = append(splitedInp[ : i-base], append(h.ToUpper(prevItems), splitedInp[i + 2: ]...)... )
 				case "(low,":
-						splitedInp = append(splitedInp[ : i-base], append([]string{s.ToLower(prevItems)}, splitedInp[i + 2: ]...)... )
+						splitedInp = append(splitedInp[ : i-base], append(h.ToLower(prevItems), splitedInp[i + 2: ]...)... )
 				case "(cap,":
-					// fmt.Println("----> ",splitedInp[ : i-base])
-					splitedInp = append(splitedInp[ : i-base], append(s.Split(h.Capitalize(prevItems)), " "), splitedInp[i + 2: ]...)... )
-					fmt.Println("----> ",splitedInp)								
+						splitedInp = append(splitedInp[ : i-base], append(h.Capitalize(prevItems), splitedInp[i + 2: ]...)... )
+
 				}
 				i -= 2
 			}
 		}
+
 	return s.Join(splitedInp, " ")
 }
