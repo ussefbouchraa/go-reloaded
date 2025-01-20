@@ -1,18 +1,17 @@
 package piscine
 
 import (
-	// "fmt"
-	// "fmt"
 	h "piscine/helper"
-	"strconv"
+	t "piscine/tools"
 	s "strings"
+	  "strconv"
 )
 
 func AddSuffix(input string) string {
-	tokens := []string {" (up) ", " (low) ", " (cap) "}
+	tokens := []string{" (up) ", " (low) ", " (cap) "}
 	for _, val := range tokens {
 		if s.Contains(input, val) {
-			token := val[:len(val) -2] + ", 1) "
+			token := val[:len(val)-2] + ", 1) "
 			input = s.Replace(input, val, token, -1)
 		}
 	}
@@ -35,7 +34,6 @@ func HandleVowel(inp string) string {
 }
 
 func HandleQuotes(inp string) string {
-
 	if s.Count(inp, "'") <= 1 {
 		return inp
 	}
@@ -78,61 +76,36 @@ func HandlePunct(inp string) string {
 
 
 func HandleFlags(inp string) string {
-	
-	tokens := []string{"(hex)", "(bin)", "(up,", "(low,", "(cap,"}
+	tokens, size:= []string{"(hex)", "(bin)", "(up,", "(low,", "(cap,"} ,0
 	splitedInp := s.Split(inp, " ")
 
-	for i := 0 ; i < len(splitedInp); i++ {
+	for i := 0; i < len(splitedInp); i++ {
 		if !h.IsExist(tokens, splitedInp[i]) {
 			continue
 		}
 
-		if splitedInp[i] == "(bin)" || splitedInp[i] == "(hex)"  {
-			var val int64 = 0
-			var err error = nil
-			if i - 1 < 0{
-				splitedInp = append(splitedInp[ : i], splitedInp[i + 1: ]...) 
-					i--
-					continue
-			}
-				if splitedInp[i] == "(bin)" {
-					val, err = strconv.ParseInt(splitedInp[i - 1], 2, 0)
-				}else if splitedInp[i] == "(hex)" {
-					val, err = strconv.ParseInt(splitedInp[i - 1], 16, 0)
-				}
-
-				if err != nil { continue }
-				splitedInp = append(splitedInp[ : i - 1], append([]string{strconv.Itoa(int(val))}, splitedInp[i + 1: ]...)... )
-				i -= 2
-				continue
+		if splitedInp[i] == "(bin)" || splitedInp[i] == "(hex)" {
+			splitedInp, i = t.HandleUniFlags(splitedInp, i)
+			continue
 		}
 
+		if len(splitedInp) > i+1 && len(splitedInp[i+1]) >= 2 && s.HasSuffix(splitedInp[i+1], ")") {
 
-		if len(splitedInp) > i+1 && len(splitedInp[i+1]) >= 2 && s.HasSuffix(splitedInp[i + 1], ")"){
-			
-			base, err := strconv.Atoi(splitedInp[i+1][ : len(splitedInp[i+1])-1])
-			if err != nil || base <= 0 { continue }
-			
-			if base > i {base = i}
-			prevItems := splitedInp[i-base : i]	
-
-			if prevItems == nil {
-				splitedInp = append(splitedInp[ : i], splitedInp[i + 2: ]...) 
-				i--
+			if size, err := strconv.Atoi(splitedInp[i+1][:len(splitedInp[i+1])-1]); err != nil || size <= 0 {
 				continue
 			}
+
+			prevItems, size := h.GetPrevious(splitedInp, i, size)
 			switch splitedInp[i] {
-				case "(up,":
-						splitedInp = append(splitedInp[ : i-base], append(h.ToUpper(prevItems), splitedInp[i + 2: ]...)... )
-				case "(low,":
-						splitedInp = append(splitedInp[ : i-base], append(h.ToLower(prevItems), splitedInp[i + 2: ]...)... )
-				case "(cap,":
-						splitedInp = append(splitedInp[ : i-base], append(h.Capitalize(prevItems), splitedInp[i + 2: ]...)... )
-
-				}
-				i -= 2
+			case "(up,":
+				splitedInp = append(splitedInp[:i-size], append(t.ToUpper(prevItems), splitedInp[i+2:]...)...)
+			case "(low,":
+				splitedInp = append(splitedInp[:i-size], append(t.ToLower(prevItems), splitedInp[i+2:]...)...)
+			case "(cap,":
+				splitedInp = append(splitedInp[:i-size], append(t.Capitalize(prevItems), splitedInp[i+2:]...)...)
 			}
+			i -= 2
 		}
-
-	return s.Join(splitedInp, " ")
+	}
+	return s.Join((splitedInp), " ")
 }

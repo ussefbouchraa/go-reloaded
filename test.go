@@ -1,7 +1,8 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
+	// "fmt"
 	"strconv"
 	s "strings"
 )
@@ -106,6 +107,68 @@ func HandleFlags(inp string) string {
 	return s.Join(splitedInp, " ")
 }
 
-// func main(){
-// 	fmt.Println(HandleFlags("(up, 1) \n1f (hex, 1) "))      
+
+func isNewLine(str string) bool{
+	if len(str) == 0{
+		return false
+	}
+	for _, val := range(str){
+		if val != '\n'{
+			return false
+		}
+	}
+	return true
+}
+
+// func GetPrevious(slic []string, indx int, size int) ([]string ,int) {
+//     res := []string{}
+//     cp := 0
+
+// 	if size > indx{size = indx}
+//     if len(slic) == 0 || indx <= 0 || size >= len(slic) {
+//         return res, size
+//     }
+    
+//     for _, val := range(slic[: indx]){
+//         if isNewLine(val) {
+// 			cp++
+// 		}
+//     }
+// 	newsize := size + cp
+// 	if (indx - newsize) < len(slic){
+// 		return slic[ indx - newsize : indx] , newsize
+// 	}
+
+//     return slic[ indx - size : indx] , size
+// }
+
+
+
+func GetPrevious(slic []string, indx int, size int) ([]string, int) {
+	res := []string{}
+
+	if size > indx {
+		size = indx
+	}
+
+	if len(slic) == 0 || indx <= 0 || size >= len(slic) {
+		return res, size
+	}
+
+	for i := indx - 1; i >= 0 &&  len(res) < size; i-- {
+		if isNewLine(slic[i]) {
+			size++
+		}
+		res = append(res, slic[i])
+	}
+
+	for i, j := 0, len(res)-1; i < j; i, j = i+1, j-1 {
+		res[i], res[j] = res[j], res[i]
+	}
+	return res, len(res)
+}
+
+// func main() {
+//     res := []string{"\n", "\n", "\n", "\n","(up, 2)"}
+//     fmt.Println(GetPrevious(res, 4, 1))
 // }

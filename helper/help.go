@@ -1,7 +1,6 @@
 package piscine
 
 import (
-	s "strings"
 	f "fmt"
 )
 
@@ -51,47 +50,38 @@ func CheckExtention(arg string) bool {
 	return false
 }
 
-func Split(s string) []string{
-	str:= []rune(s)
-	data := ""
-	slic := []string{}
-
-	if len(s) == 0{
-		return slic
+func isNewLine(str string) bool{
+	if len(str) == 0{
+		return false
 	}
-	for _, char := range str {
-		if char == ' ' { 
-			if data != "" {
-				slic = append(slic, data)
-				data = ""
-			}
-		} else {
-			data += string(char) 
+	for _, val := range(str){
+		if val != '\n'{
+			return false
 		}
 	}
-	if data != ""{
-		slic = append(slic, data)
-	}
-	return slic
+	return true
 }
 
-func ToUpper(slic []string) []string {
-	for i, str := range slic {
-		slic[i] = s.ToUpper(str)
-	}
-	return slic
-}
+func GetPrevious(slic []string, indx int, size int) ([]string, int) {
+	res := []string{}
 
-func ToLower(slic []string) []string {
-	for i, str := range slic {
-		slic[i] = s.ToLower(str)
+	if size > indx {
+		size = indx
 	}
-	return slic
-}
-func Capitalize(slic []string) []string {
-	for i, str := range slic {
-		slic[i] = s.ToUpper(string(str[0])) + s.ToLower(str[1 :])
-	}
-	return slic
 
+	if len(slic) == 0 || indx <= 0 || size >= len(slic) {
+		return res, size
+	}
+
+	for i := indx - 1; i >= 0 &&  len(res) < size; i-- {
+		if isNewLine(slic[i]) {
+			size++
+		}
+		res = append(res, slic[i])
+	}
+
+	for i, j := 0, len(res)-1; i < j; i, j = i+1, j-1 {
+		res[i], res[j] = res[j], res[i]
+	}
+	return res, len(res)
 }
