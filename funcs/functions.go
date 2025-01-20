@@ -3,8 +3,8 @@ package piscine
 import (
 	h "piscine/helper"
 	t "piscine/tools"
+	"strconv"
 	s "strings"
-	  "strconv"
 )
 
 func AddSuffix(input string) string {
@@ -76,7 +76,7 @@ func HandlePunct(inp string) string {
 
 
 func HandleFlags(inp string) string {
-	tokens, size:= []string{"(hex)", "(bin)", "(up,", "(low,", "(cap,"} ,0
+	tokens:= []string{"(hex)", "(bin)", "(up,", "(low,", "(cap,"}
 	splitedInp := s.Split(inp, " ")
 
 	for i := 0; i < len(splitedInp); i++ {
@@ -91,11 +91,12 @@ func HandleFlags(inp string) string {
 
 		if len(splitedInp) > i+1 && len(splitedInp[i+1]) >= 2 && s.HasSuffix(splitedInp[i+1], ")") {
 
-			if size, err := strconv.Atoi(splitedInp[i+1][:len(splitedInp[i+1])-1]); err != nil || size <= 0 {
+			base, err := strconv.Atoi(splitedInp[i+1][:len(splitedInp[i+1])-1])
+			if  err != nil || base <= 0 {
 				continue
 			}
 
-			prevItems, size := h.GetPrevious(splitedInp, i, size)
+			prevItems, size := h.GetPrevious(splitedInp, i, base)
 			switch splitedInp[i] {
 			case "(up,":
 				splitedInp = append(splitedInp[:i-size], append(t.ToUpper(prevItems), splitedInp[i+2:]...)...)

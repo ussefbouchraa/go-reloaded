@@ -2,6 +2,7 @@ package piscine
 
 import (
 	f "fmt"
+	"strings"
 )
 
 const ES_Green = " \033[32m"
@@ -28,8 +29,17 @@ func IsExist(strs []string, target string) bool {
 	return false
 }
 
+func handleWhiteSpaces(inp string)string{
+	WhiteSpaces := []string {"\t", "\r", "\v","\f"}
+	for _,v := range WhiteSpaces{
+		inp = strings.Replace(inp, v, " ", -1)
+	}
+	return inp
+}
+
 func Trim(inp string) string {
 	res := ""
+	inp = handleWhiteSpaces(inp)
 	inpp := []rune(inp)
 	for i, val := range inpp {
 		if val == ' ' && len(inpp) > i+1 && inpp[i+1] == ' ' {
