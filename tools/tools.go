@@ -1,4 +1,4 @@
-package piscine
+package goreload
 
 import (
 	"strconv"

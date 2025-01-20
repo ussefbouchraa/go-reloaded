@@ -1,8 +1,8 @@
-package piscine
+package goreload
 
 import (
-	h "piscine/helper"
-	t "piscine/tools"
+	h "goreload/helper"
+	t "goreload/tools"
 	"strconv"
 	s "strings"
 )
