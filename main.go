@@ -2,8 +2,8 @@ package main
 
 import (
 	os "os"
-	f "piscine/funcs"
-	h "piscine/helper"
+	f "goreload/funcs"
+	h "goreload/helper"
 	s "strings"
 )
 
