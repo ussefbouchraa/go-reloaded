@@ -46,9 +46,9 @@ func HandleQuotes(inp string) string {
 				break
 			}
 			end += start + 1
-			trimmed := s.TrimSpace(inp[start+1 : end])
-			inp = s.Replace(inp, inp[start+1:end], trimmed, -1)
-			i = end
+			trimmed :=  "'" + s.TrimSpace(inp[start+1 : end]) + "' "
+			inp = s.Replace(inp, inp[start:end + 1], trimmed , -1)
+			i += end 
 		}
 		i++
 	}
