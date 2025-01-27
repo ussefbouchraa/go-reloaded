@@ -1,8 +1,10 @@
 package goreload
 
 import (
+	"fmt"
 	"strconv"
 	s "strings"
+	// h "goreload/helper"
 )
 
 func ToUpper(slic []string) []string {
@@ -49,19 +51,15 @@ func HandleUniFlags(splitedInp []string, i int) ([]string, int) {
 
 	if i-1 >= 0 {
 		if splitedInp[i] == "(bin)" {
+			fmt.Println(splitedInp[i-1])
 			val, err = strconv.ParseInt(splitedInp[i-1], 2, 0)
 		} else if splitedInp[i] == "(hex)" {
 			val, err = strconv.ParseInt(splitedInp[i-1], 16, 0)
 		}
-
 		if err == nil {
 			splitedInp = append(splitedInp[:i-1], append([]string{strconv.Itoa(int(val))}, splitedInp[i+1:]...)...)
 			i -= 2
-			return splitedInp, i
 		}
 	}
-	splitedInp = append(splitedInp[:i], splitedInp[i+1:]...)
-	i--
-
 	return splitedInp, i
 }

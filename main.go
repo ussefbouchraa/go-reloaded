@@ -13,7 +13,7 @@ func _parseFileInp(input string) []rune {
 		os.Exit(0)
 	}
 	input = h.Trim(input)
-	funcs := []func(string) string{ f.AddSuffix, f.HandleVowel, f.HandleQuotes, f.HandleFlags, f.HandlePunct}
+	funcs := []func(string) string{ f.AddSuffix, f.HandleVowel, f.HandleFlags, f.HandlePunct, f.HandleQuotes}
 	for _, f := range funcs {
 		input = f(input)
 	}

@@ -70,6 +70,10 @@ func HandlePunct(inp string) string {
 				slices[i], slices[i+1] = slices[i+1], slices[i]
 			}
 		}
+		if s.Contains(puncts, string(slices[i])) && len(slices) > i+1 && !s.Contains(" .,!?:;", string(slices[i+1])){	
+			slices = append(slices[:i],append([]rune(" "), slices[i:]...)...)
+			i--
+		}
 	}
 	return s.TrimRight(string(slices), " ")
 }
@@ -91,12 +95,12 @@ func HandleFlags(inp string) string {
 
 		if len(splitedInp) > i+1 && len(splitedInp[i+1]) >= 2 && s.HasSuffix(splitedInp[i+1], ")") {
 
-			base, err := strconv.Atoi(splitedInp[i+1][:len(splitedInp[i+1])-1])
-			if  err != nil || base <= 0 {
+			nbr, err := strconv.Atoi(splitedInp[i+1][:len(splitedInp[i+1])-1])
+			if  err != nil || nbr <= 0 {
 				continue
 			}
 
-			prevItems, size := h.GetPrevious(splitedInp, i, base)
+			prevItems, size := h.GetPrevious(splitedInp, i, nbr)
 			switch splitedInp[i] {
 			case "(up,":
 				splitedInp = append(splitedInp[:i-size], append(t.ToUpper(prevItems), splitedInp[i+2:]...)...)
