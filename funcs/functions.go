@@ -34,6 +34,7 @@ func HandleVowel(inp string) string {
 }
 
 func HandleQuotes(inp string) string {
+
 	if s.Count(inp, "'") <= 1 {
 		return inp
 	}
@@ -46,18 +47,19 @@ func HandleQuotes(inp string) string {
 				break
 			}
 			end += start + 1
-			trimmed :=  "'" + s.TrimSpace(inp[start+1 : end]) + "' "
-			inp = s.Replace(inp, inp[start:end + 1], trimmed , -1)
+			trimmed := s.TrimSpace(inp[start+1 : end])
+			inp = s.Replace(inp, inp[start + 1 :end], trimmed , -1)
 			i += end 
 		}
 		i++
 	}
+
 	return inp
 }
 
 func HandlePunct(inp string) string {
 	slices := []rune(inp)
-	puncts := ".,!?:;"
+	puncts := ".,!?:;'"
 
 	for i := 0; i < len(slices); i++ {
 		if slices[i] == ' ' && len(slices) > i+1 {
@@ -70,18 +72,18 @@ func HandlePunct(inp string) string {
 				slices[i], slices[i+1] = slices[i+1], slices[i]
 			}
 		}
-		if s.Contains(puncts, string(slices[i])) && len(slices) > i+1 && !s.Contains(" .,!?:;", string(slices[i+1])){	
+		if s.Contains(puncts, string(slices[i])) && len(slices) > i+1 && !s.Contains(" '.,!?:;", string(slices[i+1])){	
 			slices = append(slices[:i],append([]rune(" "), slices[i:]...)...)
 			i--
 		}
 	}
-	return s.TrimRight(string(slices), " ")
-}
 
+	return string(slices)
+}
 
 func HandleFlags(inp string) string {
 	tokens:= []string{"(hex)", "(bin)", "(up,", "(low,", "(cap,"}
-	splitedInp := s.Split(inp, " ")
+	splitedInp := s.Split(h.Trim(inp), " ")
 
 	for i := 0; i < len(splitedInp); i++ {
 		if !h.IsExist(tokens, splitedInp[i]) {

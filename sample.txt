@@ -1,1 +1,2 @@
-a' a
+'  xxx    'a'xxxx' . .
+ 100 (bin)

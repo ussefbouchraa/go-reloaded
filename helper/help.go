@@ -73,7 +73,7 @@ func isNewLine(str string) bool{
 }
 
 func GetPrevious(slic []string, indx int, size int) ([]string, int) {
-	res := []string{}
+	res , rev := []string{} ,[]string{}
 
 	if size > indx {
 		size = indx
@@ -90,8 +90,9 @@ func GetPrevious(slic []string, indx int, size int) ([]string, int) {
 		res = append(res, slic[i])
 	}
 
-	for i, j := 0, len(res)-1; i < j; i, j = i+1, j-1 {
-		res[i], res[j] = res[j], res[i]
+	for j:= len(res) - 1 ; j >= 0; j--{
+		rev = append(rev, res[j])
 	}
-	return res, len(res)
+
+	return rev, len(rev)
 }
