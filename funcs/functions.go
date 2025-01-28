@@ -1,10 +1,12 @@
 package goreload
 
 import (
-	h "goreload/helper"
-	t "goreload/tools"
+	"fmt"
 	"strconv"
 	s "strings"
+
+	h "goreload/helper"
+	t "goreload/tools"
 )
 
 func AddSuffix(input string) string {
@@ -34,7 +36,6 @@ func HandleVowel(inp string) string {
 }
 
 func HandleQuotes(inp string) string {
-
 	if s.Count(inp, "'") <= 1 {
 		return inp
 	}
@@ -47,9 +48,9 @@ func HandleQuotes(inp string) string {
 				break
 			}
 			end += start + 1
-			trimmed := s.TrimSpace(inp[start+1 : end])
-			inp = s.Replace(inp, inp[start + 1 :end], trimmed , -1)
-			i += end 
+			trimmed := "'" + s.TrimSpace(inp[start+1:end]) + "'" 
+			inp = s.Replace(inp, inp[start:end+1], trimmed + " ", -1)
+			i += end
 		}
 		i++
 	}
@@ -62,6 +63,10 @@ func HandlePunct(inp string) string {
 	puncts := ".,!?:;'"
 
 	for i := 0; i < len(slices); i++ {
+		if s.Contains(puncts, string(slices[i])) && len(slices) > i+1 && !s.Contains(" .,!?:;", string(slices[i+1])) {
+			slices = append(slices[:i], append([]rune(" "), slices[i:]...)...)
+
+		}
 		if slices[i] == ' ' && len(slices) > i+1 {
 			if slices[i+1] == ' ' {
 				slices = append(slices[:i], slices[i+1:]...)
@@ -72,17 +77,13 @@ func HandlePunct(inp string) string {
 				slices[i], slices[i+1] = slices[i+1], slices[i]
 			}
 		}
-		if s.Contains(puncts, string(slices[i])) && len(slices) > i+1 && !s.Contains(" '.,!?:;", string(slices[i+1])){	
-			slices = append(slices[:i],append([]rune(" "), slices[i:]...)...)
-			i--
-		}
 	}
-
+	fmt.Println(string(slices))
 	return string(slices)
 }
 
 func HandleFlags(inp string) string {
-	tokens:= []string{"(hex)", "(bin)", "(up,", "(low,", "(cap,"}
+	tokens := []string{"(hex)", "(bin)", "(up,", "(low,", "(cap,"}
 	splitedInp := s.Split(h.Trim(inp), " ")
 
 	for i := 0; i < len(splitedInp); i++ {
@@ -98,7 +99,7 @@ func HandleFlags(inp string) string {
 		if len(splitedInp) > i+1 && len(splitedInp[i+1]) >= 2 && s.HasSuffix(splitedInp[i+1], ")") {
 
 			nbr, err := strconv.Atoi(splitedInp[i+1][:len(splitedInp[i+1])-1])
-			if  err != nil || nbr <= 0 {
+			if err != nil || nbr <= 0 {
 				continue
 			}
 
