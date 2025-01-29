@@ -1,12 +1,12 @@
 package goreload
 
 import (
+	// "fmt"
 	"fmt"
-	"strconv"
-	s "strings"
-
 	h "goreload/helper"
 	t "goreload/tools"
+	"strconv"
+	s "strings"
 )
 
 func AddSuffix(input string) string {
@@ -39,6 +39,7 @@ func HandleQuotes(inp string) string {
 	if s.Count(inp, "'") <= 1 {
 		return inp
 	}
+	fmt.Println(inp)
 	i, start := 0, 0
 	for i < len(inp) {
 		if inp[i] == 39 && len(inp) > i+1 {
@@ -48,12 +49,13 @@ func HandleQuotes(inp string) string {
 				break
 			}
 			end += start + 1
-			trimmed := "'" + s.TrimSpace(inp[start+1:end]) + "'" 
-			inp = s.Replace(inp, inp[start:end+1], trimmed + " ", -1)
-			i += end
+			trimmed :=  s.TrimSpace(inp[start+1 : end ])
+			inp = s.Replace(inp, inp[start+1 : end], trimmed , -1)
+			i = end
 		}
 		i++
 	}
+
 
 	return inp
 }
@@ -63,23 +65,24 @@ func HandlePunct(inp string) string {
 	puncts := ".,!?:;'"
 
 	for i := 0; i < len(slices); i++ {
-		if s.Contains(puncts, string(slices[i])) && len(slices) > i+1 && !s.Contains(" .,!?:;", string(slices[i+1])) {
-			slices = append(slices[:i], append([]rune(" "), slices[i:]...)...)
-
+		if s.Contains(puncts, string(slices[i])) && len(slices) > i+1 &&  slices[i+1] != ' '{
+			slices = append(slices[:i+1], append([]rune(" "), slices[i+1:]...)...)
+			i++
 		}
 		if slices[i] == ' ' && len(slices) > i+1 {
 			if slices[i+1] == ' ' {
 				slices = append(slices[:i], slices[i+1:]...)
-				i--
-				continue
 			}
-			if s.Index(puncts, string(slices[i+1])) != -1 {
+			if s.Index(".,!?:;", string(slices[i+1])) != -1 {
 				slices[i], slices[i+1] = slices[i+1], slices[i]
 			}
+			if slices[i+1] == '\n' {
+				slices = append(slices[:i], slices[i+1:]...)
+			}
+
 		}
 	}
-	fmt.Println(string(slices))
-	return string(slices)
+	return s.TrimRight(string(slices), " ")
 }
 
 func HandleFlags(inp string) string {
