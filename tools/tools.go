@@ -2,7 +2,7 @@ package goreload
 
 import (
 	"strconv"
-	s "strings"
+	S "strings"
 )
 
 func ToUpper(slic []string) []string {
@@ -10,7 +10,7 @@ func ToUpper(slic []string) []string {
 		return []string{}
 	}
 	for i, str := range slic {
-		slic[i] = s.ToUpper(str)
+		slic[i] = S.ToUpper(str)
 	}
 	return slic
 }
@@ -20,7 +20,7 @@ func ToLower(slic []string) []string {
 		return []string{}
 	}
 	for i, str := range slic {
-		slic[i] = s.ToLower(str)
+		slic[i] = S.ToLower(str)
 	}
 	return slic
 }
@@ -36,7 +36,7 @@ func Capitalize(slic []string) []string {
 			j++
 		}
 		if len(str) > j {
-			slic[i] = string(str[ : j]) + s.ToUpper(string(str[j])) + s.ToLower(string(str[j+1 :]))
+			slic[i] = string(str[ : j]) + S.ToUpper(string(str[j])) + S.ToLower(string(str[j+1 :]))
 		}
 	}
 	return slic

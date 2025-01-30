@@ -1,7 +1,7 @@
 package goreload
 
 import (
-	f "fmt"
+	F "fmt"
 	"strings"
 )
 
@@ -9,11 +9,11 @@ const ES_Green = " \033[32m"
 const ES_Reset = "\033[37m"
 
 func PrintHeader(){
-	f.Println(ES_Green + "  ############################################## " + ES_Reset)
-	f.Println(ES_Green + "  #                                           	# " + ES_Reset)
-	f.Println(ES_Green + "  #          <<--- Go_reloaded --->>           # " + ES_Reset)
-	f.Println(ES_Green + "  #                                           	# " + ES_Reset)
-	f.Println(ES_Green + "  ############################################## " + ES_Reset)
+	F.Println(ES_Green + "  ############################################## " + ES_Reset)
+	F.Println(ES_Green + "  #                                           	# " + ES_Reset)
+	F.Println(ES_Green + "  #          <<--- Go_reloaded --->>           # " + ES_Reset)
+	F.Println(ES_Green + "  #                                           	# " + ES_Reset)
+	F.Println(ES_Green + "  ############################################## " + ES_Reset)
 }
 
 

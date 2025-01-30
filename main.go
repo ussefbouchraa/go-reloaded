@@ -2,9 +2,9 @@ package main
 
 import (
 	os "os"
-	f "goreload/funcs"
-	h "goreload/helper"
-	s "strings"
+	F "goreload/funcs"
+	H "goreload/helper"
+	S "strings"
 )
 
 func _parseFileInp(input string) []rune {
@@ -12,7 +12,7 @@ func _parseFileInp(input string) []rune {
 		os.Stderr.WriteString("ERR : Empty File !\n")
 		os.Exit(0)
 	}
-	funcs := []func(string) string{ f.AddSuffix, f.HandleVowel, f.HandleFlags, f.HandlePunct, f.HandleQuotes}
+	funcs := []func(string) string{ F.AddSuffix, F.HandleVowel, F.HandleFlags, F.HandlePunct, F.HandleQuotes}
 	for _, f := range funcs {
 		input = f(input)
 	}
@@ -21,7 +21,7 @@ func _parseFileInp(input string) []rune {
 
 func _launching(files ...string) {
 
-	h.PrintHeader()
+	H.PrintHeader()
 	data, err := os.ReadFile(files[0])
 	if err != nil {
 		os.Stderr.WriteString(err.Error() + "\n")
@@ -29,22 +29,11 @@ func _launching(files ...string) {
 	}
 	newbuffer := _parseFileInp(string(data))
 
-	err = os.WriteFile(files[1], []byte(s.TrimRight(string(newbuffer), " ")), 0777)
+	err = os.WriteFile(files[1], []byte(S.TrimRight(string(newbuffer), " ")), 0777)
 	if err != nil {
 		os.Stderr.WriteString(err.Error())
 		return
 	}
-}
-
-func _checkFiles(files ...string) bool {
-	for i := 0; i < len(files); i++ {
-		_, err := os.Stat(files[i])
-		if err != nil {
-			os.Stderr.WriteString(err.Error())
-			return false
-		}
-	}
-	return true
 }
 
 func _checkArgs(args ...string) bool {
@@ -53,7 +42,7 @@ func _checkArgs(args ...string) bool {
 		os.Stderr.WriteString("ERR : Invalid Argument !\n")
 		return false
 	}
-	if !h.CheckExtention(args[0]) || !h.CheckExtention(args[1]) {
+	if !H.CheckExtention(args[0]) || !H.CheckExtention(args[1]) {
 		os.Stderr.WriteString("ERR : Invalid File Format !")
 		return false
 	}
@@ -70,7 +59,7 @@ func main() {
 		os.Stderr.WriteString("ERR : Not Enough Parameters !\n")
 		return
 	}
-	if !_checkArgs(args[0], args[1]) || !_checkFiles(args[0], args[1]) {
+	if !_checkArgs(args[0], args[1]) {
 		return
 	}
 
