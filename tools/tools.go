@@ -60,6 +60,9 @@ func HandleUniFlags(splitedInp []string, i int) ([]string, int) {
 			splitedInp = append(splitedInp[:i], splitedInp[i+1:]...)
 			i--
 		}
+	}else{
+		splitedInp = append(splitedInp[:i], splitedInp[i+1:]...)
+			i--
 	}
 	return splitedInp, i
 }
