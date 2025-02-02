@@ -56,6 +56,9 @@ func HandleUniFlags(splitedInp []string, i int) ([]string, int) {
 		if err == nil {
 			splitedInp = append(splitedInp[:i-1], append([]string{strconv.Itoa(int(val))}, splitedInp[i+1:]...)...)
 			i -= 2
+		}else{
+			splitedInp = append(splitedInp[:i], splitedInp[i+1:]...)
+			i--
 		}
 	}
 	return splitedInp, i
